@@ -1,0 +1,1834 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ligan - CCUS Monitoring System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a2463 0%, #1e5128 100%);
+            min-height: 100vh;
+            padding: 0;
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.98);
+            padding: 15px 0;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .navbar-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #1e5128;
+        }
+
+        .logo-icon {
+            font-size: 32px;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 35px;
+            align-items: center;
+        }
+
+        .nav-menu a {
+            text-decoration: none;
+            color: #2d3748;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        .nav-menu a:hover {
+            color: #1e5128;
+        }
+
+        .lang-switch {
+            cursor: pointer;
+            font-size: 24px;
+            transition: transform 0.3s ease;
+        }
+
+        .lang-switch:hover {
+            transform: rotate(180deg);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        header {
+            background: white;
+            padding: 25px 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header-logo-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #0a2463 0%, #1e5128 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: white;
+            font-weight: bold;
+        }
+
+        h1 {
+            color: #2d3748;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            color: #718096;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .timestamp {
+            color: #718096;
+            font-size: 14px;
+        }
+
+        .hero-section {
+            position: relative;
+            background: linear-gradient(135deg, rgba(10, 36, 99, 0.9), rgba(30, 81, 40, 0.9)),
+                        url('background.jpg') center/cover;
+            padding: 80px 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+            color: white;
+            min-height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .hero-content h2 {
+            font-size: 42px;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .hero-content p {
+            font-size: 18px;
+            line-height: 1.8;
+            max-width: 900px;
+            margin: 0 auto;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .media-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .media-container {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .media-container h3 {
+            color: #2d3748;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        .media-placeholder {
+            background: linear-gradient(135deg, #e0f2f1 0%, #c8e6c9 100%);
+            border-radius: 10px;
+            padding: 60px 20px;
+            text-align: center;
+            color: #1e5128;
+            font-size: 16px;
+            border: 2px dashed #1e5128;
+        }
+
+        .status-bar {
+            background: white;
+            padding: 20px 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .status-indicator {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .status-normal {
+            background: #48bb78;
+            box-shadow: 0 0 20px rgba(72, 187, 120, 0.5);
+        }
+
+        .status-warning {
+            background: #ecc94b;
+            box-shadow: 0 0 20px rgba(236, 201, 75, 0.5);
+        }
+
+        .status-error {
+            background: #f56565;
+            box-shadow: 0 0 20px rgba(245, 101, 101, 0.5);
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.1);
+                opacity: 0.8;
+            }
+        }
+
+        .status-text {
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .status-description {
+            color: #718096;
+            font-size: 13px;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .metric-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #0a2463 0%, #1e5128 100%);
+        }
+
+        .metric-label {
+            color: #718096;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+        }
+
+        .metric-value {
+            font-size: 36px;
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+
+        .metric-unit {
+            color: #718096;
+            font-size: 16px;
+            font-weight: normal;
+        }
+
+        .metric-trend {
+            font-size: 14px;
+            color: #48bb78;
+            margin-top: 10px;
+        }
+
+        .metric-trend.down {
+            color: #f56565;
+        }
+
+        .sdg-section {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+        }
+
+        .sdg-section h2 {
+            color: #2d3748;
+            margin-bottom: 25px;
+            font-size: 28px;
+            text-align: center;
+        }
+
+        .sdg-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+        }
+
+        .sdg-card {
+            padding: 30px;
+            border-radius: 12px;
+            color: white;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .sdg-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+
+        .sdg-7 {
+            background: linear-gradient(135deg, #FCC30B 0%, #F9A825 100%);
+        }
+
+        .sdg-9 {
+            background: linear-gradient(135deg, #F26A2E 0%, #D84315 100%);
+        }
+
+        .sdg-12 {
+            background: linear-gradient(135deg, #BF8B2E 0%, #8B6914 100%);
+        }
+
+        .sdg-13 {
+            background: linear-gradient(135deg, #3F7E44 0%, #1B5E20 100%);
+        }
+
+        .sdg-number {
+            font-size: 48px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .sdg-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .sdg-description {
+            font-size: 14px;
+            opacity: 0.95;
+        }
+
+        /* Team Section Styles */
+        .team-section {
+            background: white;
+            padding: 50px 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+        }
+
+        .team-title {
+            color: #2d3748;
+            font-size: 32px;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 40px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .team-member {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .team-member:hover {
+            transform: translateY(-10px);
+        }
+
+        .team-photo {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0a2463 0%, #1e5128 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            transition: box-shadow 0.3s ease;
+            font-size: 60px;
+        }
+
+        .team-member:hover .team-photo {
+            box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+        }
+
+        .team-name {
+            font-size: 22px;
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 8px;
+        }
+
+        .team-role {
+            font-size: 15px;
+            color: #718096;
+            font-weight: 500;
+        }
+
+        /* Newsroom Styles */
+        .newsroom-container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+        }
+
+        .newsroom-title {
+            color: #2d3748;
+            font-size: 32px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        /* Countries Page Styles */
+        .countries-container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+        }
+
+        .countries-title {
+            color: #2d3748;
+            font-size: 32px;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .regions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 30px;
+        }
+
+        .region-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .region-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .region-image {
+            height: 250px;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .region-content {
+            padding: 30px;
+            background: #f7fafc;
+        }
+
+        .region-name {
+            font-size: 28px;
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 20px;
+        }
+
+        .region-topics {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .topic-item {
+            color: #2d3748;
+            font-size: 16px;
+            line-height: 1.6;
+            padding-left: 0;
+            position: relative;
+        }
+
+        .topic-item:before {
+            content: '';
+            position: absolute;
+            left: -20px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 6px;
+            height: 6px;
+            background: #1e5128;
+            border-radius: 50%;
+        }
+
+        /* Energy Page Styles */
+        .energy-hero {
+            background: linear-gradient(135deg, #0a2463 0%, #1e5128 100%);
+            padding: 60px 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+            color: white;
+            text-align: center;
+        }
+
+        .energy-title {
+            font-size: 36px;
+            margin-bottom: 40px;
+        }
+
+        .total-consumption {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .consumption-label {
+            font-size: 18px;
+            margin-bottom: 15px;
+            opacity: 0.9;
+        }
+
+        .consumption-value {
+            font-size: 72px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .consumption-unit {
+            font-size: 36px;
+            margin-left: 10px;
+        }
+
+        .consumption-change {
+            font-size: 18px;
+        }
+
+        .change-indicator {
+            font-weight: bold;
+            font-size: 24px;
+            margin-right: 10px;
+        }
+
+        .change-indicator.positive {
+            color: #68d391;
+        }
+
+        .change-indicator.negative {
+            color: #fc8181;
+        }
+
+        .change-text {
+            opacity: 0.8;
+        }
+
+        .energy-section {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 28px;
+            color: #2d3748;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .breakdown-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 25px;
+        }
+
+        .breakdown-card {
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            transition: transform 0.3s ease;
+            border: 2px solid #e2e8f0;
+        }
+
+        .breakdown-card:hover {
+            transform: translateY(-5px);
+            border-color: #1e5128;
+        }
+
+        .breakdown-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .breakdown-name {
+            font-size: 16px;
+            color: #4a5568;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .breakdown-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+
+        .breakdown-percentage {
+            font-size: 20px;
+            color: #1e5128;
+            font-weight: bold;
+        }
+
+        .source-mix-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .chart-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        #energyChart {
+            max-width: 350px;
+            max-height: 350px;
+        }
+
+        .source-description {
+            font-size: 16px;
+            line-height: 1.8;
+            color: #4a5568;
+        }
+
+        .efficiency-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .efficiency-card {
+            background: linear-gradient(135deg, #e6fffa 0%, #b2f5ea 100%);
+            padding: 35px;
+            border-radius: 12px;
+            border: 2px solid #81e6d9;
+        }
+
+        .efficiency-label {
+            font-size: 15px;
+            color: #234e52;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .efficiency-value {
+            font-size: 48px;
+            font-weight: bold;
+            color: #234e52;
+            margin-bottom: 10px;
+        }
+
+        .efficiency-unit {
+            font-size: 24px;
+            margin-left: 5px;
+        }
+
+        .efficiency-trend {
+            font-size: 14px;
+            color: #2c7a7b;
+        }
+
+        .cost-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 25px;
+        }
+
+        .cost-card {
+            background: linear-gradient(135deg, #fff5f5 0%, #fed7d7 100%);
+            padding: 30px;
+            border-radius: 12px;
+            border: 2px solid #feb2b2;
+            text-align: center;
+        }
+
+        .cost-card.main-cost {
+            background: linear-gradient(135deg, #0a2463 0%, #1e5128 100%);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .cost-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .cost-label {
+            font-size: 15px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .main-cost .cost-label {
+            color: white;
+            opacity: 0.9;
+        }
+
+        .cost-card:not(.main-cost) .cost-label {
+            color: #742a2a;
+        }
+
+        .cost-value {
+            font-size: 56px;
+            font-weight: bold;
+        }
+
+        .cost-value-small {
+            font-size: 36px;
+            font-weight: bold;
+            color: #742a2a;
+        }
+
+        .cost-value-small.positive {
+            color: #22543d;
+        }
+
+        .currency {
+            font-size: 0.7em;
+        }
+
+        .cost-period {
+            font-size: 20px;
+            opacity: 0.8;
+        }
+
+        /* Newsroom Styles continued */
+
+        .news-item {
+            display: flex;
+            gap: 25px;
+            padding: 25px;
+            border-bottom: 2px solid #e2e8f0;
+            transition: background 0.3s ease;
+        }
+
+        .news-item:hover {
+            background: #f7fafc;
+        }
+
+        .news-item:last-child {
+            border-bottom: none;
+        }
+
+        .news-content {
+            flex: 1;
+        }
+
+        .news-title {
+            font-size: 22px;
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .news-text {
+            font-size: 15px;
+            color: #4a5568;
+            line-height: 1.6;
+        }
+
+        .news-image {
+            width: 300px;
+            height: 200px;
+            background: linear-gradient(135deg, #e0f2f1 0%, #c8e6c9 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #1e5128;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        .page-btn {
+            padding: 10px 18px;
+            background: #e2e8f0;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #2d3748;
+            transition: all 0.3s ease;
+        }
+
+        .page-btn:hover {
+            background: #cbd5e0;
+        }
+
+        .page-btn.active {
+            background: linear-gradient(135deg, #0a2463 0%, #1e5128 100%);
+            color: white;
+        }
+
+        /* Contact Us Styles */
+        .contact-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        .contact-main {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            min-height: 500px;
+        }
+
+        .contact-image {
+            background: linear-gradient(135deg, rgba(10, 36, 99, 0.8), rgba(30, 81, 40, 0.8)),
+                        url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&h=600&fit=crop') center/cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 48px;
+        }
+
+        .contact-form-section {
+            padding: 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .contact-form-title {
+            font-size: 28px;
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+
+        .contact-form-subtitle {
+            color: #718096;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #2d3748;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #1e5128;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #0a2463 0%, #1e5128 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .contact-info {
+            padding: 40px 50px;
+            background: #f7fafc;
+        }
+
+        .contact-info h3 {
+            color: #2d3748;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 18px;
+            color: #4a5568;
+        }
+
+        .info-icon {
+            font-size: 24px;
+            color: #1e5128;
+        }
+
+        footer {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+            color: #718096;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .navbar-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .nav-menu {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 15px;
+            }
+
+            header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .status-bar {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .media-section {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-content h2 {
+                font-size: 28px;
+            }
+
+            .hero-content p {
+                font-size: 16px;
+            }
+
+            .news-item {
+                flex-direction: column;
+            }
+
+            .news-image {
+                width: 100%;
+            }
+
+            .contact-main {
+                grid-template-columns: 1fr;
+            }
+
+            .contact-image {
+                min-height: 200px;
+            }
+
+            .regions-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .source-mix-container {
+                grid-template-columns: 1fr;
+            }
+
+            .cost-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="nav-logo">
+                <span class="logo-icon">⚡︎</span>
+                <span>Ligan</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a onclick="showPage('home')">Home</a></li>
+                <li><a onclick="showPage('energy')">Energy</a></li>
+                <li><a onclick="showPage('countries')">Countries</a></li>
+                <li><a onclick="showPage('newsroom')">Newsroom</a></li>
+                <li><a onclick="showPage('contact')">Contact Us</a></li>
+                <li>
+                    <span class="lang-switch" onclick="toggleLanguage()" title="Switch Language">🌐</span>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- HOME PAGE -->
+        <div id="home-page" class="page active">
+            <div class="hero-section">
+                <div class="hero-content">
+                    <h2 data-en="About CCUS Technology" data-id="Tentang Teknologi CCUS">Tentang Teknologi CCUS</h2>
+                    <p data-en="CCUS (Carbon Capture, Utilization and Storage) is a technology that captures carbon dioxide (CO₂) emissions from industrial sources such as power plants and factories, then utilizes or stores them permanently. This technology plays an important role in climate change mitigation by preventing CO₂ from being released into the atmosphere. Captured CO₂ can be used for various industrial applications such as manufacturing chemicals, fuels, or construction materials, while unused CO₂ is safely stored in underground geological formations to prevent its contribution to global warming." 
+                       data-id="CCUS (Carbon Capture, Utilization and Storage) adalah teknologi yang menangkap emisi karbon dioksida (CO₂) dari sumber industri seperti pembangkit listrik dan pabrik, kemudian memanfaatkan atau menyimpannya secara permanen. Teknologi ini berperan penting dalam mitigasi perubahan iklim dengan mencegah CO₂ terlepas ke atmosfer. CO₂ yang ditangkap dapat digunakan untuk berbagai aplikasi industri seperti pembuatan bahan kimia, bahan bakar, atau material konstruksi, sementara yang tidak dimanfaatkan disimpan dengan aman di formasi geologi bawah tanah untuk mencegah kontribusinya terhadap pemanasan global.">
+                        CCUS (Carbon Capture, Utilization and Storage) adalah teknologi yang menangkap emisi karbon dioksida (CO₂) dari sumber industri seperti pembangkit listrik dan pabrik, kemudian memanfaatkan atau menyimpannya secara permanen. Teknologi ini berperan penting dalam mitigasi perubahan iklim dengan mencegah CO₂ terlepas ke atmosfer. CO₂ yang ditangkap dapat digunakan untuk berbagai aplikasi industri seperti pembuatan bahan kimia, bahan bakar, atau material konstruksi, sementara yang tidak dimanfaatkan disimpan dengan aman di formasi geologi bawah tanah untuk mencegah kontribusinya terhadap pemanasan global.
+                    </p>
+                </div>
+            </div>
+
+            <div class="media-section">
+                <div class="media-container">
+                    <h3 data-en="Prototype Video" data-id="Video Prototipe">Video Prototipe</h3>
+                    <div class="media-placeholder">
+                        📹 <br><br>
+                        <span data-en="Place your prototype video/GIF here" data-id="Tempatkan video/GIF prototipe Anda di sini">Tempatkan video/GIF prototipe Anda di sini</span>
+                        <br><br>
+                        <small data-en="(Replace with your video embed code)" data-id="(Ganti dengan kode embed video Anda)">(Ganti dengan kode embed video Anda)</small>
+                    </div>
+                </div>
+
+                <div class="media-container">
+                    <h3 data-en="How CCUS Works" data-id="Cara Kerja CCUS">Cara Kerja CCUS</h3>
+                    <div class="media-placeholder">
+                        📊 <br><br>
+                        <span data-en="CCUS Process Diagram" data-id="Diagram Proses CCUS">Diagram Proses CCUS</span>
+                        <br><br>
+                        <small data-en="(1) Capture → (2) Transport → (3) Utilize/Store" data-id="(1) Penangkapan → (2) Transport → (3) Pemanfaatan/Penyimpanan">(1) Penangkapan → (2) Transport → (3) Pemanfaatan/Penyimpanan</small>
+                    </div>
+                </div>
+            </div>
+
+            <header>
+                <div class="logo">
+                    <div class="header-logo-icon">⚡︎</div>
+                    <div>
+                        <h1>Ligan CCUS Monitor</h1>
+                        <p class="subtitle">Carbon Capture, Utilization & Storage System</p>
+                    </div>
+                </div>
+                <div class="timestamp" id="timestamp">Loading...</div>
+            </header>
+
+            <div class="status-bar">
+                <div class="status-item">
+                    <div class="status-indicator status-normal"></div>
+                    <div>
+                        <div class="status-text" data-en="Status: Normal" data-id="Status: Normal">Status: Normal</div>
+                        <div class="status-description" data-en="All systems operating optimally" data-id="Semua sistem beroperasi optimal">Semua sistem beroperasi optimal</div>
+                    </div>
+                </div>
+                <div style="text-align: right;">
+                    <div style="font-size: 12px; color: #718096;" data-en="Click to simulate:" data-id="Klik untuk simulasi:">Klik untuk simulasi:</div>
+                    <button onclick="changeStatus('normal')" style="padding: 8px 15px; margin: 5px; background: #48bb78; color: white; border: none; border-radius: 5px; cursor: pointer;">Normal</button>
+                    <button onclick="changeStatus('warning')" style="padding: 8px 15px; margin: 5px; background: #ecc94b; color: white; border: none; border-radius: 5px; cursor: pointer;">Warning</button>
+                    <button onclick="changeStatus('error')" style="padding: 8px 15px; margin: 5px; background: #f56565; color: white; border: none; border-radius: 5px; cursor: pointer;">Error</button>
+                </div>
+            </div>
+
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-label">CO₂ Captured</div>
+                    <div class="metric-value">
+                        <span id="captured">0</span>
+                        <span class="metric-unit" data-en="ton/day" data-id="ton/hari">ton/hari</span>
+                    </div>
+                    <div class="metric-trend" data-en="↑ 12% from yesterday" data-id="↑ 12% dari kemarin">↑ 12% dari kemarin</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-label">CO₂ Utilized</div>
+                    <div class="metric-value">
+                        <span id="utilized">0</span>
+                        <span class="metric-unit" data-en="ton/day" data-id="ton/hari">ton/hari</span>
+                    </div>
+                    <div class="metric-trend" data-en="↑ 8% from yesterday" data-id="↑ 8% dari kemarin">↑ 8% dari kemarin</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-label">CO₂ Stored</div>
+                    <div class="metric-value">
+                        <span id="stored">0</span>
+                        <span class="metric-unit" data-en="ton/day" data-id="ton/hari">ton/hari</span>
+                    </div>
+                    <div class="metric-trend" data-en="↑ 15% from yesterday" data-id="↑ 15% dari kemarin">↑ 15% dari kemarin</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-label">Capture Efficiency</div>
+                    <div class="metric-value">
+                        <span id="efficiency">0</span>
+                        <span class="metric-unit">%</span>
+                    </div>
+                    <div class="metric-trend" data-en="↑ 2.1% from yesterday" data-id="↑ 2.1% dari kemarin">↑ 2.1% dari kemarin</div>
+                </div>
+            </div>
+
+            <div class="sdg-section">
+                <h2 data-en="Supporting UN Sustainable Development Goals" data-id="Mendukung Tujuan Pembangunan Berkelanjutan PBB">Mendukung Tujuan Pembangunan Berkelanjutan PBB</h2>
+                <div class="sdg-grid">
+                    <div class="sdg-card sdg-7">
+                        <div class="sdg-number">7</div>
+                        <div class="sdg-title" data-en="Affordable and Clean Energy" data-id="Energi Bersih dan Terjangkau">Energi Bersih dan Terjangkau</div>
+                        <div class="sdg-description" data-en="Ensuring access to affordable, reliable, sustainable and modern energy" data-id="Memastikan akses terhadap energi yang terjangkau, andal, berkelanjutan dan modern">Memastikan akses terhadap energi yang terjangkau, andal, berkelanjutan dan modern</div>
+                    </div>
+                    <div class="sdg-card sdg-9">
+                        <div class="sdg-number">9</div>
+                        <div class="sdg-title" data-en="Industry, Innovation and Infrastructure" data-id="Industri, Inovasi dan Infrastruktur">Industri, Inovasi dan Infrastruktur</div>
+                        <div class="sdg-description" data-en="Building resilient infrastructure and promoting sustainable industrialization" data-id="Membangun infrastruktur yang tangguh dan mendorong industrialisasi berkelanjutan">Membangun infrastruktur yang tangguh dan mendorong industrialisasi berkelanjutan</div>
+                    </div>
+                    <div class="sdg-card sdg-12">
+                        <div class="sdg-number">12</div>
+                        <div class="sdg-title" data-en="Responsible Consumption and Production" data-id="Konsumsi dan Produksi Bertanggung Jawab">Konsumsi dan Produksi Bertanggung Jawab</div>
+                        <div class="sdg-description" data-en="Ensuring sustainable consumption and production patterns" data-id="Memastikan pola konsumsi dan produksi yang berkelanjutan">Memastikan pola konsumsi dan produksi yang berkelanjutan</div>
+                    </div>
+                    <div class="sdg-card sdg-13">
+                        <div class="sdg-number">13</div>
+                        <div class="sdg-title" data-en="Climate Action" data-id="Penanganan Perubahan Iklim">Penanganan Perubahan Iklim</div>
+                        <div class="sdg-description" data-en="Taking urgent action to combat climate change and its impacts" data-id="Mengambil tindakan cepat untuk mengatasi perubahan iklim dan dampaknya">Mengambil tindakan cepat untuk mengatasi perubahan iklim dan dampaknya</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="team-section">
+                <h2 class="team-title" data-en="Meet The Team Behind" data-id="Kenali Tim di Balik">Kenali Tim di Balik</h2>
+                <div class="team-grid">
+                    <div class="team-member">
+                        <div class="team-photo">
+                            <span><img src="najma.png" alt=""></span>
+                        </div>
+                        <div class="team-name">Najma</div>
+                        <div class="team-role" data-en="Research Scientist" data-id="Ilmuwan Riset">Ilmuwan Riset</div>
+                    </div>
+                    <div class="team-member">
+                        <div class="team-photo">
+                            <span><img src="zakia.png" alt=""></span>
+                        </div>
+                        <div class="team-name">Zakia</div>
+                        <div class="team-role" data-en="Research Scientist" data-id="Ilmuwan Riset">Ilmuwan Riset</div>
+                    </div>
+                    <div class="team-member">
+                        <div class="team-photo">
+                            <span><img src="bintang.png" alt=""></span>
+                        </div>
+                        <div class="team-name">Bintang</div>
+                        <div class="team-role" data-en="Systems Engineer" data-id="Insinyur Sistem">Insinyur Sistem</div>
+                    </div>
+                    <div class="team-member">
+                        <div class="team-photo">
+                            <span><img src="fattaah.png" alt=""></span>
+                        </div>
+                        <div class="team-name">Fattaah</div>
+                        <div class="team-role" data-en="Data Analyst" data-id="Analis Data">Analis Data</div>
+                    </div>
+                    <div class="team-member">
+                        <div class="team-photo">
+                            <span><img src="salman.png" alt=""></span>
+                        </div>
+                        <div class="team-name">Salman</div>
+                        <div class="team-role" data-en="Technology Specialist" data-id="Spesialis Teknologi">Spesialis Teknologi</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- NEWSROOM PAGE -->
+        <div id="newsroom-page" class="page">
+            <div class="newsroom-container">
+                <h2 class="newsroom-title" data-en="Latest News & Updates" data-id="Berita & Update Terbaru">Berita & Update Terbaru</h2>
+                
+                <div id="news-content">
+                    <!-- News items will be loaded here -->
+                </div>
+
+                <div class="pagination">
+                    <button class="page-btn" onclick="loadNews(1)">1</button>
+                    <button class="page-btn" onclick="loadNews(2)">2</button>
+                    <button class="page-btn" onclick="loadNews(3)">3</button>
+                    <button class="page-btn" onclick="loadNews(4)">4</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- COUNTRIES PAGE -->
+        <div id="countries-page" class="page">
+            <div class="countries-container">
+                <h2 class="countries-title" data-en="CCUS Implementation Around the World" data-id="Implementasi CCUS di Seluruh Dunia">Implementasi CCUS di Seluruh Dunia</h2>
+                
+                <div class="regions-grid">
+                    <!-- Africa -->
+                    <div class="region-card">
+                        <div class="region-image" style="background: linear-gradient(135deg, rgba(10, 36, 99, 0.7), rgba(30, 81, 40, 0.7)), url('https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?w=600&h=400&fit=crop') center/cover;">
+                        </div>
+                        <div class="region-content">
+                            <h3 class="region-name">Africa</h3>
+                            <div class="region-topics">
+                                <div class="topic-item" data-en="Pathways for Africa's energy future" data-id="Jalur masa depan energi Afrika">Jalur masa depan energi Afrika</div>
+                                <div class="topic-item" data-en="Wärtsilä Engines: Powering Africa" data-id="Mesin Wärtsilä: Memberdayakan Afrika">Mesin Wärtsilä: Memberdayakan Afrika</div>
+                                <div class="topic-item" data-en="CCUS pilot projects in South Africa" data-id="Proyek percontohan CCUS di Afrika Selatan">Proyek percontohan CCUS di Afrika Selatan</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Americas -->
+                    <div class="region-card">
+                        <div class="region-image" style="background: linear-gradient(135deg, rgba(10, 36, 99, 0.7), rgba(30, 81, 40, 0.7)), url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=400&fit=crop') center/cover;">
+                        </div>
+                        <div class="region-content">
+                            <h3 class="region-name">Americas</h3>
+                            <div class="region-topics">
+                                <div class="topic-item" data-en="California pathways to renewables" data-id="Jalur California menuju energi terbarukan">Jalur California menuju energi terbarukan</div>
+                                <div class="topic-item" data-en="Navigating the Energy Transition in Chile" data-id="Menavigasi Transisi Energi di Chile">Menavigasi Transisi Energi di Chile</div>
+                                <div class="topic-item" data-en="The value of flexibility: Case Brazil" data-id="Nilai fleksibilitas: Kasus Brazil">Nilai fleksibilitas: Kasus Brazil</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Europe -->
+                    <div class="region-card">
+                        <div class="region-image" style="background: linear-gradient(135deg, rgba(10, 36, 99, 0.7), rgba(30, 81, 40, 0.7)), url('https://images.unsplash.com/photo-1467269204594-9661b134dd2b?w=600&h=400&fit=crop') center/cover;">
+                        </div>
+                        <div class="region-content">
+                            <h3 class="region-name">Europe</h3>
+                            <div class="region-topics">
+                                <div class="topic-item" data-en="Europe's energy future" data-id="Masa depan energi Eropa">Masa depan energi Eropa</div>
+                                <div class="topic-item" data-en="Achieving a net zero power system in Germany" data-id="Mencapai sistem tenaga net zero di Jerman">Mencapai sistem tenaga net zero di Jerman</div>
+                                <div class="topic-item" data-en="Northern Lights: Norway's CCUS leadership" data-id="Northern Lights: Kepemimpinan CCUS Norwegia">Northern Lights: Kepemimpinan CCUS Norwegia</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Middle East & Asia -->
+                    <div class="region-card">
+                        <div class="region-image" style="background: linear-gradient(135deg, rgba(10, 36, 99, 0.7), rgba(30, 81, 40, 0.7)), url('https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=600&h=400&fit=crop') center/cover;">
+                        </div>
+                        <div class="region-content">
+                            <h3 class="region-name">Middle East & Asia</h3>
+                            <div class="region-topics">
+                                <div class="topic-item" data-en="Making money with flexibility" data-id="Menghasilkan uang dengan fleksibilitas">Menghasilkan uang dengan fleksibilitas</div>
+                                <div class="topic-item" data-en="Commercial and industrial solutions" data-id="Solusi komersial dan industri">Solusi komersial dan industri</div>
+                                <div class="topic-item" data-en="Rethinking energy in Southeast Asia" data-id="Memikirkan ulang energi di Asia Tenggara">Memikirkan ulang energi di Asia Tenggara</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Oceania -->
+                    <div class="region-card">
+                        <div class="region-image" style="background: linear-gradient(135deg, rgba(10, 36, 99, 0.7), rgba(30, 81, 40, 0.7)), url('https://images.unsplash.com/photo-1523482580672-f109ba8cb9be?w=600&h=400&fit=crop') center/cover;">
+                        </div>
+                        <div class="region-content">
+                            <h3 class="region-name">Oceania</h3>
+                            <div class="region-topics">
+                                <div class="topic-item" data-en="Australia's hydrogen economy roadmap" data-id="Peta jalan ekonomi hidrogen Australia">Peta jalan ekonomi hidrogen Australia</div>
+                                <div class="topic-item" data-en="New Zealand's geothermal CCUS integration" data-id="Integrasi CCUS geotermal Selandia Baru">Integrasi CCUS geotermal Selandia Baru</div>
+                                <div class="topic-item" data-en="Pacific islands renewable transition" data-id="Transisi energi terbarukan pulau Pasifik">Transisi energi terbarukan pulau Pasifik</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- East Asia -->
+                    <div class="region-card">
+                        <div class="region-image" style="background: linear-gradient(135deg, rgba(10, 36, 99, 0.7), rgba(30, 81, 40, 0.7)), url('https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=600&h=400&fit=crop') center/cover;">
+                        </div>
+                        <div class="region-content">
+                            <h3 class="region-name">East Asia</h3>
+                            <div class="region-topics">
+                                <div class="topic-item" data-en="Japan's carbon recycling initiatives" data-id="Inisiatif daur ulang karbon Jepang">Inisiatif daur ulang karbon Jepang</div>
+                                <div class="topic-item" data-en="South Korea's green new deal" data-id="Kesepakatan baru hijau Korea Selatan">Kesepakatan baru hijau Korea Selatan</div>
+                                <div class="topic-item" data-en="China's ambitious CCUS deployment" data-id="Penerapan CCUS ambisius China">Penerapan CCUS ambisius China</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ENERGY PAGE -->
+        <div id="energy-page" class="page">
+            <!-- Section 1: Total Energy Consumption -->
+            <div class="energy-hero">
+                <h2 class="energy-title" data-en="Energy Analytics Dashboard" data-id="Dashboard Analitik Energi">Dashboard Analitik Energi</h2>
+                <div class="total-consumption">
+                    <div class="consumption-label" data-en="Total Energy Consumption" data-id="Total Konsumsi Energi">Total Konsumsi Energi</div>
+                    <div class="consumption-value">
+                        <span id="total-energy">0</span>
+                        <span class="consumption-unit">MWh</span>
+                    </div>
+                    <div class="consumption-change">
+                        <span class="change-indicator positive">↑ 8.5%</span>
+                        <span class="change-text" data-en="vs last month" data-id="vs bulan lalu">vs bulan lalu</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2: Energy Breakdown -->
+            <div class="energy-section">
+                <h3 class="section-title" data-en="Energy Breakdown by Process" data-id="Rincian Energi per Proses">Rincian Energi per Proses</h3>
+                <div class="breakdown-grid">
+                    <div class="breakdown-card">
+                        <div class="breakdown-icon">🔬</div>
+                        <div class="breakdown-name" data-en="CO₂ Capture" data-id="Penangkapan CO₂">Penangkapan CO₂</div>
+                        <div class="breakdown-value"><span id="capture-energy">0</span> MWh</div>
+                        <div class="breakdown-percentage">62%</div>
+                    </div>
+                    <div class="breakdown-card">
+                        <div class="breakdown-icon">🚛</div>
+                        <div class="breakdown-name" data-en="Transportation" data-id="Transportasi">Transportasi</div>
+                        <div class="breakdown-value"><span id="transport-energy">0</span> MWh</div>
+                        <div class="breakdown-percentage">15%</div>
+                    </div>
+                    <div class="breakdown-card">
+                        <div class="breakdown-icon">⚗️</div>
+                        <div class="breakdown-name" data-en="Utilization" data-id="Pemanfaatan">Pemanfaatan</div>
+                        <div class="breakdown-value"><span id="util-energy">0</span> MWh</div>
+                        <div class="breakdown-percentage">13%</div>
+                    </div>
+                    <div class="breakdown-card">
+                        <div class="breakdown-icon">📦</div>
+                        <div class="breakdown-name" data-en="Storage" data-id="Penyimpanan">Penyimpanan</div>
+                        <div class="breakdown-value"><span id="storage-energy">0</span> MWh</div>
+                        <div class="breakdown-percentage">10%</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 3: Energy Source Mix -->
+            <div class="energy-section">
+                <h3 class="section-title" data-en="Energy Source Mix" data-id="Bauran Sumber Energi">Bauran Sumber Energi</h3>
+                <div class="source-mix-container">
+                    <div class="chart-wrapper">
+                        <canvas id="energyChart"></canvas>
+                    </div>
+                    <div class="source-description">
+                        <p data-en="Our CCUS facility is powered by a diverse energy mix that prioritizes renewable sources. Solar and wind energy contribute 45% of our total power consumption, while natural gas provides reliable baseload power at 35%. We maintain grid connection for 15% backup supply and utilize 5% from other sustainable sources including biomass. This balanced approach ensures operational reliability while minimizing our carbon footprint and supporting the transition to clean energy." 
+                           data-id="Fasilitas CCUS kami didukung oleh bauran energi yang beragam dengan prioritas pada sumber energi terbarukan. Energi solar dan angin berkontribusi 45% dari total konsumsi daya kami, sementara gas alam menyediakan pasokan dasar yang andal sebesar 35%. Kami mempertahankan koneksi grid untuk 15% pasokan cadangan dan memanfaatkan 5% dari sumber berkelanjutan lainnya termasuk biomassa. Pendekatan seimbang ini memastikan keandalan operasional sambil meminimalkan jejak karbon kami dan mendukung transisi ke energi bersih.">
+                            Fasilitas CCUS kami didukung oleh bauran energi yang beragam dengan prioritas pada sumber energi terbarukan. Energi solar dan angin berkontribusi 45% dari total konsumsi daya kami, sementara gas alam menyediakan pasokan dasar yang andal sebesar 35%. Kami mempertahankan koneksi grid untuk 15% pasokan cadangan dan memanfaatkan 5% dari sumber berkelanjutan lainnya termasuk biomassa. Pendekatan seimbang ini memastikan keandalan operasional sambil meminimalkan jejak karbon kami dan mendukung transisi ke energi bersih.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 4: Energy Efficiency -->
+            <div class="energy-section">
+                <h3 class="section-title" data-en="Energy Efficiency Metrics" data-id="Metrik Efisiensi Energi">Metrik Efisiensi Energi</h3>
+                <div class="efficiency-grid">
+                    <div class="efficiency-card">
+                        <div class="efficiency-label" data-en="Energy per CO₂ Captured" data-id="Energi per CO₂ Tertangkap">Energi per CO₂ Tertangkap</div>
+                        <div class="efficiency-value">
+                            <span id="efficiency-kwh">0</span>
+                            <span class="efficiency-unit">kWh/ton CO₂</span>
+                        </div>
+                        <div class="efficiency-trend" data-en="↓ 12% improvement this quarter" data-id="↓ 12% peningkatan kuartal ini">↓ 12% peningkatan kuartal ini</div>
+                    </div>
+                    <div class="efficiency-card">
+                        <div class="efficiency-label" data-en="Overall System Efficiency" data-id="Efisiensi Sistem Keseluruhan">Efisiensi Sistem Keseluruhan</div>
+                        <div class="efficiency-value">
+                            <span id="system-efficiency">0</span>
+                            <span class="efficiency-unit">%</span>
+                        </div>
+                        <div class="efficiency-trend" data-en="↑ 3.2% vs last year" data-id="↑ 3.2% vs tahun lalu">↑ 3.2% vs tahun lalu</div>
+                    </div>
+                    <div class="efficiency-card">
+                        <div class="efficiency-label" data-en="Carbon Intensity" data-id="Intensitas Karbon">Intensitas Karbon</div>
+                        <div class="efficiency-value">
+                            <span id="carbon-intensity">0</span>
+                            <span class="efficiency-unit">kg CO₂/MWh</span>
+                        </div>
+                        <div class="efficiency-trend" data-en="↓ 18% reduction achieved" data-id="↓ 18% reduksi tercapai">↓ 18% reduksi tercapai</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 5: Operational Cost -->
+            <div class="energy-section">
+                <h3 class="section-title" data-en="Operational Cost Analysis" data-id="Analisis Biaya Operasional">Analisis Biaya Operasional</h3>
+                <div class="cost-grid">
+                    <div class="cost-card main-cost">
+                        <div class="cost-icon">💰</div>
+                        <div class="cost-label" data-en="Total Energy Cost" data-id="Total Biaya Energi">Total Biaya Energi</div>
+                        <div class="cost-value">
+                            <span class="currency">$</span>
+                            <span id="total-cost">0</span>
+                            <span class="cost-period" data-en="/month" data-id="/bulan">/bulan</span>
+                        </div>
+                    </div>
+                    <div class="cost-card">
+                        <div class="cost-label" data-en="Cost per Ton CO₂" data-id="Biaya per Ton CO₂">Biaya per Ton CO₂</div>
+                        <div class="cost-value-small">
+                            <span class="currency">$</span>
+                            <span id="cost-per-ton">0</span>
+                        </div>
+                    </div>
+                    <div class="cost-card">
+                        <div class="cost-label" data-en="Energy Cost per MWh" data-id="Biaya Energi per MWh">Biaya Energi per MWh</div>
+                        <div class="cost-value-small">
+                            <span class="currency">$</span>
+                            <span id="cost-per-mwh">0</span>
+                        </div>
+                    </div>
+                    <div class="cost-card">
+                        <div class="cost-label" data-en="Projected Annual Savings" data-id="Proyeksi Penghematan Tahunan">Proyeksi Penghematan Tahunan</div>
+                        <div class="cost-value-small positive">
+                            <span class="currency">$</span>
+                            <span id="annual-savings">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CONTACT PAGE -->
+        <div id="contact-page" class="page">
+            <div class="contact-container">
+                <div class="contact-main">
+                    <div class="contact-image">
+                        📧
+                    </div>
+                    <div class="contact-form-section">
+                        <h2 class="contact-form-title" data-en="Subscribe to Ligan" data-id="Berlangganan ke Ligan">Berlangganan ke Ligan</h2>
+                        <p class="contact-form-subtitle" data-en="Get the latest updates on CCUS technology" data-id="Dapatkan update terbaru tentang teknologi CCUS">Dapatkan update terbaru tentang teknologi CCUS</p>
+                        
+                        <form onsubmit="handleSubmit(event)">
+                            <div class="form-group">
+                                <label data-en="Full Name" data-id="Nama Lengkap">Nama Lengkap</label>
+                                <input type="text" required placeholder="John Doe">
+                            </div>
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="email" required placeholder="john@example.com">
+                            </div>
+                            <div class="form-group">
+                                <label data-en="Phone Number" data-id="Nomor Telepon">Nomor Telepon</label>
+                                <input type="tel" required placeholder="+62 812 3456 7890">
+                            </div>
+                            <button type="submit" class="submit-btn" data-en="Subscribe Now" data-id="Berlangganan Sekarang">Berlangganan Sekarang</button>
+                        </form>
+                    </div>
+                </div>
+                
+                <div class="contact-info">
+                    <h3 data-en="Contact Information" data-id="Informasi Kontak">Informasi Kontak</h3>
+                    <div class="info-item">
+                        <span class="info-icon">📧</span>
+                        <span>info@ligan-ccus.com</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-icon">📱</span>
+                        <span>+62 274 1234 5678</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-icon">📍</span>
+                        <span>Jl. Teknologi Hijau No. 123, Yogyakarta, Indonesia 55281</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            © 2025 Ligan CCUS Monitoring System | <span data-en="Real-time Environmental Monitoring" data-id="Pemantauan Lingkungan Real-time">Pemantauan Lingkungan Real-time</span>
+        </footer>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script>
+        let currentLang = 'id';
+        let animationDone = false;
+        let energyAnimationDone = false;
+        let currentNewsPage = 1;
+        let energyChart = null;
+
+        // News data
+        const newsData = {
+            id: [
+                {
+                    title: "Indonesia Luncurkan Proyek CCUS Pertama di Asia Tenggara",
+                    text: "Pemerintah Indonesia resmi meluncurkan proyek Carbon Capture, Utilization and Storage (CCUS) pertama di kawasan Asia Tenggara. Proyek ini berlokasi di Gresik, Jawa Timur dan diharapkan dapat menangkap hingga 1 juta ton CO₂ per tahun dari industri semen. Direktur Jenderal Energi Baru Terbarukan mengatakan bahwa proyek ini merupakan langkah penting dalam mencapai target net zero emission Indonesia pada tahun 2060."
+                },
+                {
+                    title: "Teknologi MOF Terbaru Tingkatkan Efisiensi Penangkapan CO₂",
+                    text: "Para peneliti dari Institut Teknologi Bandung berhasil mengembangkan Metal-Organic Framework (MOF) generasi baru yang mampu meningkatkan efisiensi penangkapan CO₂ hingga 95%. Material inovatif ini memiliki kapasitas penyerapan yang lebih tinggi dan dapat diregenerasi dengan konsumsi energi yang lebih rendah dibandingkan teknologi sebelumnya. Inovasi ini diharapkan dapat menurunkan biaya operasional CCUS hingga 30%."
+                },
+                {
+                    title: "Kemitraan Global Untuk Percepatan Implementasi CCUS",
+                    text: "Ligan CCUS menandatangani kerjasama strategis dengan konsorsium internasional yang terdiri dari perusahaan energi terkemuka dari Norwegia, Jepang, dan Australia. Kemitraan ini bertujuan untuk mempercepat transfer teknologi dan knowledge sharing dalam implementasi CCUS di Indonesia. Program ini akan mencakup pelatihan tenaga ahli lokal dan pengembangan infrastruktur CCUS di berbagai wilayah Indonesia."
+                },
+                {
+                    title: "Pemanfaatan CO₂ Tangkapan Untuk Industri Kimia Berkelanjutan",
+                    text: "Sebuah terobosan baru dalam utilisasi CO₂ berhasil dikembangkan dimana karbon dioksida yang ditangkap dapat dikonversi menjadi bahan baku untuk industri kimia. Proses ini menggunakan katalis berbasis nano yang dapat mengubah CO₂ menjadi metanol, ethanol, dan berbagai senyawa kimia bernilai tinggi lainnya. Teknologi ini membuka peluang ekonomi baru dari CO₂ yang sebelumnya dianggap sebagai limbah."
+                },
+                {
+                    title: "Investasi CCUS Global Diprediksi Capai $200 Miliar pada 2030",
+                    text: "Menurut laporan terbaru dari International Energy Agency (IEA), investasi global dalam teknologi CCUS diperkirakan akan mencapai $200 miliar pada tahun 2030. Pertumbuhan signifikan ini didorong oleh komitmen negara-negara untuk mencapai net zero emission dan meningkatnya regulasi carbon pricing di berbagai belahan dunia. Indonesia diproyeksikan menjadi salah satu pasar CCUS terbesar di Asia Pasifik."
+                },
+                {
+                    title: "Monitoring Real-time Meningkatkan Keamanan Penyimpanan CO₂",
+                    text: "Sistem monitoring berbasis AI dan IoT yang dikembangkan oleh Ligan berhasil meningkatkan keamanan penyimpanan CO₂ di formasi geologi bawah tanah. Sistem ini mampu mendeteksi potensi kebocoran dengan akurasi 99.9% dan memberikan peringatan dini kepada operator. Teknologi ini menggunakan sensor fiber optic dan algoritma machine learning untuk analisis data real-time yang komprehensif."
+                },
+                {
+                    title: "Workshop Internasional CCUS Technology Digelar di Jakarta",
+                    text: "Jakarta akan menjadi tuan rumah Workshop Internasional CCUS Technology yang dihadiri oleh lebih dari 500 delegasi dari 40 negara. Acara yang berlangsung selama 3 hari ini akan membahas perkembangan terkini dalam teknologi penangkapan, transportasi, dan penyimpanan karbon. Keynote speaker termasuk pemenang Nobel Kimia dan para pemimpin industri energi global."
+                },
+                {
+                    title: "Pilot Project CCUS di Pembangkit Listrik Batubara Sukses",
+                    text: "Pilot project retrofit CCUS pada pembangkit listrik tenaga batubara di Suralaya berhasil menunjukkan hasil yang menggembirakan. Sistem ini mampu menangkap 90% emisi CO₂ dari flue gas dengan efisiensi energi yang tinggi. Keberhasilan proyek ini membuka peluang untuk penerapan CCUS pada lebih dari 100 pembangkit listrik batubara di Indonesia yang masih beroperasi."
+                },
+                {
+                    title: "Standar Nasional CCUS Indonesia Resmi Diterbitkan",
+                    text: "Kementerian ESDM resmi menerbitkan Standar Nasional Indonesia (SNI) untuk implementasi teknologi CCUS. Standar ini mencakup aspek teknis, keselamatan, monitoring, dan verifikasi penyimpanan CO₂. Penerbitan SNI ini akan memberikan kepastian regulasi dan mendorong investasi dalam proyek-proyek CCUS di Indonesia sekaligus menjamin implementasi yang aman dan berkelanjutan."
+                },
+                {
+                    title: "Startup Local Kembangkan Solusi CCUS untuk UMKM",
+                    text: "Sebuah startup teknologi hijau dari Yogyakarta berhasil mengembangkan sistem CCUS skala kecil yang affordable untuk industri UMKM. Sistem modular ini dapat dipasang pada berbagai jenis industri kecil dengan investasi yang relatif terjangkau. Inovasi ini penting karena sektor UMKM menyumbang sekitar 30% dari total emisi CO₂ industri di Indonesia."
+                },
+                {
+                    title: "Blue Hydrogen dari CCUS: Masa Depan Energi Bersih",
+                    text: "Proyek percontohan produksi blue hydrogen menggunakan teknologi CCUS menunjukkan hasil yang menjanjikan. Hidrogen yang dihasilkan memiliki jejak karbon yang sangat rendah karena CO₂ dari proses produksi ditangkap dan disimpan. Blue hydrogen ini dapat menjadi alternatif energi bersih untuk transportasi, industri, dan pembangkit listrik dalam transisi menuju ekonomi rendah karbon."
+                },
+                {
+                    title: "Kolaborasi Akademisi-Industri Percepat Riset CCUS",
+                    text: "Sepuluh universitas terkemuka di Indonesia membentuk konsorsium riset CCUS bersama dengan perusahaan energi nasional. Kolaborasi ini akan fokus pada pengembangan material penangkap CO₂ yang lebih efisien, optimalisasi proses, dan penurunan biaya implementasi. Program ini juga mencakup beasiswa untuk mahasiswa yang tertarik mendalami teknologi CCUS dan sustainability."
+                }
+            ],
+            en: [
+                {
+                    title: "Indonesia Launches First CCUS Project in Southeast Asia",
+                    text: "The Indonesian government officially launched the first Carbon Capture, Utilization and Storage (CCUS) project in Southeast Asia. Located in Gresik, East Java, this project is expected to capture up to 1 million tons of CO₂ per year from the cement industry. The Director General of New and Renewable Energy stated that this project is an important step towards achieving Indonesia's net zero emission target by 2060."
+                },
+                {
+                    title: "New MOF Technology Increases CO₂ Capture Efficiency",
+                    text: "Researchers from Bandung Institute of Technology have successfully developed a new generation Metal-Organic Framework (MOF) capable of increasing CO₂ capture efficiency up to 95%. This innovative material has higher absorption capacity and can be regenerated with lower energy consumption compared to previous technologies. This innovation is expected to reduce CCUS operational costs by up to 30%."
+                },
+                {
+                    title: "Global Partnership to Accelerate CCUS Implementation",
+                    text: "Ligan CCUS signed a strategic cooperation with an international consortium consisting of leading energy companies from Norway, Japan, and Australia. This partnership aims to accelerate technology transfer and knowledge sharing in CCUS implementation in Indonesia. The program will include training for local experts and development of CCUS infrastructure across various regions in Indonesia."
+                },
+                {
+                    title: "Utilizing Captured CO₂ for Sustainable Chemical Industry",
+                    text: "A new breakthrough in CO₂ utilization has been developed where captured carbon dioxide can be converted into raw materials for the chemical industry. This process uses nano-based catalysts that can transform CO₂ into methanol, ethanol, and various other high-value chemical compounds. This technology opens new economic opportunities from CO₂ that was previously considered waste."
+                },
+                {
+                    title: "Global CCUS Investment Predicted to Reach $200 Billion by 2030",
+                    text: "According to the latest report from the International Energy Agency (IEA), global investment in CCUS technology is estimated to reach $200 billion by 2030. This significant growth is driven by countries' commitments to achieve net zero emissions and increasing carbon pricing regulations worldwide. Indonesia is projected to become one of the largest CCUS markets in the Asia Pacific."
+                },
+                {
+                    title: "Real-time Monitoring Enhances CO₂ Storage Safety",
+                    text: "An AI and IoT-based monitoring system developed by Ligan has successfully improved the safety of CO₂ storage in underground geological formations. This system can detect potential leaks with 99.9% accuracy and provide early warnings to operators. The technology uses fiber optic sensors and machine learning algorithms for comprehensive real-time data analysis."
+                },
+                {
+                    title: "International CCUS Technology Workshop Held in Jakarta",
+                    text: "Jakarta will host the International CCUS Technology Workshop attended by more than 500 delegates from 40 countries. This 3-day event will discuss the latest developments in carbon capture, transportation, and storage technology. Keynote speakers include a Nobel Prize winner in Chemistry and global energy industry leaders."
+                },
+                {
+                    title: "CCUS Pilot Project at Coal Power Plant Succeeds",
+                    text: "A CCUS retrofit pilot project at the Suralaya coal-fired power plant has shown encouraging results. The system can capture 90% of CO₂ emissions from flue gas with high energy efficiency. The success of this project opens opportunities for CCUS application at more than 100 coal-fired power plants still operating in Indonesia."
+                },
+                {
+                    title: "Indonesian National CCUS Standard Officially Published",
+                    text: "The Ministry of Energy and Mineral Resources officially published the Indonesian National Standard (SNI) for CCUS technology implementation. This standard covers technical aspects, safety, monitoring, and verification of CO₂ storage. The publication of this SNI will provide regulatory certainty and encourage investment in CCUS projects in Indonesia while ensuring safe and sustainable implementation."
+                },
+                {
+                    title: "Local Startup Develops CCUS Solution for SMEs",
+                    text: "A green technology startup from Yogyakarta has successfully developed an affordable small-scale CCUS system for SME industries. This modular system can be installed in various types of small industries with relatively affordable investment. This innovation is important because the SME sector contributes about 30% of total industrial CO₂ emissions in Indonesia."
+                },
+                {
+                    title: "Blue Hydrogen from CCUS: The Future of Clean Energy",
+                    text: "A pilot project for blue hydrogen production using CCUS technology shows promising results. The hydrogen produced has a very low carbon footprint because CO₂ from the production process is captured and stored. This blue hydrogen can be a clean energy alternative for transportation, industry, and power generation in the transition towards a low-carbon economy."
+                },
+                {
+                    title: "Academic-Industry Collaboration Accelerates CCUS Research",
+                    text: "Ten leading universities in Indonesia formed a CCUS research consortium together with national energy companies. This collaboration will focus on developing more efficient CO₂ capture materials, process optimization, and reducing implementation costs. The program also includes scholarships for students interested in deepening their knowledge of CCUS technology and sustainability."
+                }
+            ]
+        };
+
+        function loadNews(page) {
+            currentNewsPage = page;
+            const newsContent = document.getElementById('news-content');
+            const startIdx = (page - 1) * 3;
+            const endIdx = startIdx + 3;
+            const news = newsData[currentLang].slice(startIdx, endIdx);
+
+            newsContent.innerHTML = news.map(item => `
+                <div class="news-item">
+                    <div class="news-content">
+                        <div class="news-title">${item.title}</div>
+                        <div class="news-text">${item.text}</div>
+                    </div>
+                    <div class="news-image">
+                        🖼️<br><br>
+                        <small>${currentLang === 'id' ? 'Gambar Berita' : 'News Image'}</small>
+                    </div>
+                </div>
+            `).join('');
+
+            // Update pagination
+            document.querySelectorAll('.page-btn').forEach((btn, idx) => {
+                btn.classList.toggle('active', idx + 1 === page);
+            });
+        }
+
+        function animateValue(element, start, end, duration) {
+            let startTime = null;
+            const step = (timestamp) => {
+                if (!startTime) startTime = timestamp;
+                const progress = Math.min((timestamp - startTime) / duration, 1);
+                const value = progress * (end - start) + start;
+                element.textContent = value.toFixed(1);
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        function startMetricsAnimation() {
+            if (animationDone) return;
+            animateValue(document.getElementById('captured'), 0, 152.4, 3000);
+            animateValue(document.getElementById('utilized'), 0, 68.7, 3000);
+            animateValue(document.getElementById('stored'), 0, 83.7, 3000);
+            animateValue(document.getElementById('efficiency'), 0, 94.2, 3000);
+            animationDone = true;
+        }
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'id' ? 'en' : 'id';
+            document.querySelectorAll('[data-en]').forEach(el => {
+                el.textContent = el.getAttribute(`data-${currentLang}`);
+            });
+            
+            // Reload news if on newsroom page
+            const newsroomPage = document.getElementById('newsroom-page');
+            if (newsroomPage.classList.contains('active')) {
+                loadNews(currentNewsPage);
+            }
+
+            // Update energy chart labels if on energy page
+            const energyPage = document.getElementById('energy-page');
+            if (energyPage.classList.contains('active') && energyChart) {
+                const labels = currentLang === 'id' 
+                    ? ['Solar & Angin', 'Gas Alam', 'Grid', 'Lainnya']
+                    : ['Solar & Wind', 'Natural Gas', 'Grid', 'Others'];
+                energyChart.data.labels = labels;
+                energyChart.update();
+            }
+        }
+
+        function showPage(page) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            
+            // Show selected page
+            if (page === 'home') {
+                document.getElementById('home-page').classList.add('active');
+            } else if (page === 'newsroom') {
+                document.getElementById('newsroom-page').classList.add('active');
+                loadNews(1);
+            } else if (page === 'contact') {
+                document.getElementById('contact-page').classList.add('active');
+            } else if (page === 'countries') {
+                document.getElementById('countries-page').classList.add('active');
+            } else if (page === 'energy') {
+                document.getElementById('energy-page').classList.add('active');
+            } else {
+                alert(`${currentLang === 'id' ? 'Halaman' : 'Page'} ${page} ${currentLang === 'id' ? 'sedang dalam pengembangan' : 'is under development'}`);
+                document.getElementById('home-page').classList.add('active');
+            }
+        }
+
+        function updateTimestamp() {
+            const now = new Date();
+            const options = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            };
+            const locale = currentLang === 'id' ? 'id-ID' : 'en-US';
+            document.getElementById('timestamp').textContent = now.toLocaleDateString(locale, options);
+        }
+
+        function changeStatus(status) {
+            const indicator = document.querySelector('.status-indicator');
+            const statusText = document.querySelector('.status-text');
+            const statusDesc = document.querySelector('.status-description');
+            
+            indicator.className = 'status-indicator';
+            
+            if (status === 'normal') {
+                indicator.classList.add('status-normal');
+                statusText.setAttribute('data-en', 'Status: Normal');
+                statusText.setAttribute('data-id', 'Status: Normal');
+                statusDesc.setAttribute('data-en', 'All systems operating optimally');
+                statusDesc.setAttribute('data-id', 'Semua sistem beroperasi optimal');
+            } else if (status === 'warning') {
+                indicator.classList.add('status-warning');
+                statusText.setAttribute('data-en', 'Status: Warning');
+                statusText.setAttribute('data-id', 'Status: Warning');
+                statusDesc.setAttribute('data-en', 'MOF requires maintenance');
+                statusDesc.setAttribute('data-id', 'MOF membutuhkan maintenance');
+            } else if (status === 'error') {
+                indicator.classList.add('status-error');
+                statusText.setAttribute('data-en', 'Status: Inactive');
+                statusText.setAttribute('data-id', 'Status: Tidak Aktif');
+                statusDesc.setAttribute('data-en', 'CCUS system not operating');
+                statusDesc.setAttribute('data-id', 'Sistem CCUS tidak beroperasi');
+            }
+            
+            statusText.textContent = statusText.getAttribute(`data-${currentLang}`);
+            statusDesc.textContent = statusDesc.getAttribute(`data-${currentLang}`);
+        }
+
+        function updateMetrics() {
+            if (!animationDone) return;
+            document.getElementById('captured').textContent = (150 + Math.random() * 10).toFixed(1);
+            document.getElementById('utilized').textContent = (65 + Math.random() * 8).toFixed(1);
+            document.getElementById('stored').textContent = (80 + Math.random() * 8).toFixed(1);
+            document.getElementById('efficiency').textContent = (92 + Math.random() * 4).toFixed(1);
+        }
+
+        function handleSubmit(e) {
+            e.preventDefault();
+            const message = currentLang === 'id' 
+                ? 'Terima kasih telah berlangganan! Kami akan mengirimkan update ke email Anda.'
+                : 'Thank you for subscribing! We will send updates to your email.';
+            alert(message);
+            e.target.reset();
+        }
+
+        // Initialize
+        window.addEventListener('load', () => {
+            setTimeout(startMetricsAnimation, 500);
+        });
+
+        updateTimestamp();
+        setInterval(updateTimestamp, 1000);
+        setInterval(updateMetrics, 5000);
+    </script>
+</body>
+</html>
